@@ -1,0 +1,29 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: task_postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: taskuser
+      POSTGRES_PASSWORD: taskpass
+      POSTGRES_DB: utkrusht_booking
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  node:
+    build: /root/task
+    container_name: task_node
+    restart: always
+    depends_on:
+      - postgres
+    working_dir: /root/task
+    volumes:
+      - /root/task:/root/task
+    ports:
+      - "3000:3000"
+    command: ["sh", "-c", "npm install --production && node src/server.js"]
+
+volumes:
+  pgdata:
